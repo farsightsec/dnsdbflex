@@ -1,0 +1,100 @@
+/*
+ * Copyright (c) 2014-2020 by Farsight Security, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+dnsdbflex is a pure C99 program that accesses passive DNS database systems such as:
+	* the DNSDB Flex API server at Farsight Security
+
+An API key is required for operation.
+
+The dnsdbflex executable has the following dependencies:
+
+Dependencies:
+	jansson (2.5 or later)
+	libcurl (7.28 or later)
+	modern compiler (clang or GCC)
+
+On Linux (Debian 8):
+	apt-get install libcurl4-openssl-dev
+	apt-get install libjansson-dev
+
+On Linux (CentOS 6):
+	# Based on PHP instructions for installing libcurl...
+	wget http://curl.haxx.se/download/curl-7.28.1.tar.gz
+	tar xvzf curl-7.28.1.tar.gz
+	cd curl-7.28.1/
+	./configure --with-libssh2 --enable-ares=/usr/local/ --enable-ipv6
+	make
+	make install
+
+	# lib jansson
+	wget http://www.digip.org/jansson/releases/jansson-2.5.tar.gz
+	tar -xpzf jansson-2.5.tar.gz
+	cd jansson-2.5
+	./configure
+	make
+	make install
+
+	echo /usr/local/lib >> /etc/ld.so.conf.d/local.conf
+	ldconfig
+
+On FreeBSD 10:
+	pkg install curl jansson
+
+On OSX:
+	brew install jansson
+
+Getting Started
+	Add the API key to ~/.dnsdb-query.conf in the below given format,
+	APIKEY="YOURAPIKEYHERE"
+
+	If you don't have an API key, you may qualify for a free one:
+	https://www.farsightsecurity.com/
+
+
+The three optional filter scripts require the "jq" command-line processor:
+  filter_rdata_json_to_csv.sh
+  filter_rrnames_json_to_csv.sh
+  filter_rdata_raw_json_to_batch.sh
+
+jq is available in source from https://stedolan.github.io/jq/
+
+    On Linux (Debian 8 and higher):
+            apt-get install jq
+
+    On OSX:
+            brew install jq
+
+    On FreeBSD 10:
+            pkg install jq
+
+All three scripts take dnsdbflex json output as input and produce
+different outputs.
+
+filter_rdata_json_to_csv.sh
+
+        Takes JSON produced by `dnsdbflex -s rdata` and produces CSV
+        output.
+
+filter_rrnames_json_to_csv.sh
+
+        Takes JSON produced by `dnsdbflex -s rrnames` and produces CSV
+        output.
+
+filter_rdata_raw_json_to_batch.sh
+
+        Takes JSON produced by `dnsdbflex -s rdata` and produces
+        dnsdbq batch file input data.  This is useful if dnsdbflex was
+        run in -j mode, but you decide you want output from -F more.
