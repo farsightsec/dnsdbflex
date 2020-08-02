@@ -64,30 +64,6 @@ rrtype_ok_to_print_literal(const char *rrtype) {
 	return false;
 }
 
-/* pprint_json -- pretty-print a JSON buffer after validation.
- *
- * returns true if could parse the json ok, otherwise returns false.
- */
-bool
-pprint_json(const char *buf, size_t len, FILE *outf) {
-	json_t	*js;
-	json_error_t error;
-
-	js = json_loadb(buf, len, 0, &error);
-	if (js == NULL) {
-		fprintf(stderr, "JSON parsing error %d:%d: %s %s\n",
-			error.line, error.column,
-			error.text, error.source);
-		return false;
-	}
-
-	json_dumpf(js, outf, JSON_INDENT(2));
-	fputc('\n', outf);
-
-	json_decref(js);
-	return true;
-}
-
 /* present_json -- render one tuple as newline-separated JSON.
  */
 void
@@ -96,7 +72,7 @@ present_json(pdns_tuple_ct tup,
 	     size_t jsonlen __attribute__ ((unused)),
 	     writer_t writer __attribute__ ((unused)))
 {
-	json_dumpf(tup->obj.saf_obj, stdout, JSON_INDENT(0));
+	json_dumpf(tup->obj.saf_obj, stdout, JSON_INDENT(0) | JSON_COMPACT);
 	putchar('\n');
 }
 

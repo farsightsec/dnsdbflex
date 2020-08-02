@@ -106,7 +106,6 @@ typedef void (*present_t)(pdns_tuple_ct, const char *, size_t, writer_t);
  */
 typedef enum { pres_json, pres_batch, pres_batch_dedup_rrtype } present_e;
 
-bool pprint_json(const char *, size_t, FILE *);
 void present_json(pdns_tuple_ct, const char *, size_t, writer_t);
 void present_batch(pdns_tuple_ct, const char *, size_t, writer_t);
 void present_batch_dedup_rrtype(pdns_tuple_ct, const char *, size_t, writer_t);
