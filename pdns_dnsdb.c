@@ -132,13 +132,14 @@ dnsdb_ready(void) {
 		dnsdb_base_url = ret;
 	}
 
+	if (api_key == NULL)
+		return "no API key given";
+
 	if (api_key_blocked(api_key)) {
 		return "The type of API key given is not allowed to use"
 			" the DNSDB Flex API";
 	}
 
-	if (api_key == NULL)
-		return "no API key given";
 	return NULL;
 }
 
