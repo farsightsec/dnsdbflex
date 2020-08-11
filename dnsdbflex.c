@@ -452,15 +452,16 @@ help(void) {
 	printf("usage: %s [-cdFhjqsTUv46] \n",
 	       program_name);
 	puts("\t[-l QUERY-LIMIT] [-L OUTPUT-LIMIT] [-A after] [-B before]\n"
-	     "\t[-u system] [-O offset] {\n"
-	     "\t[--regex regex]\n"
-	     "\t[--glob glob]\n"
+	     "\t[-u system] [-O offset]\n"
+	     "\t{\n"
+	     "\t\t[--regex regex] |\n"
+	     "\t\t[--glob glob]\n"
+	     "\t}\n"
 	     "\t[--exclude glob|regex]\n"
 	     "\t[-r terse|t|details|d]\n"
 	     "\t[-s rrnames|n|rdata|d]\n"
-	     "\t\t}\n"
-	     "\t}");
-	puts("for -A and -B, use absolute format YYYY-MM-DD[ HH:MM:SS],\n"
+	     "\t[-t rrtype]\n"
+	     "for -A and -B, use absolute format YYYY-MM-DD[ HH:MM:SS],\n"
 	     "\tor relative format %dw%dd%dh%dm%ds.\n"
 	     "use -c to get complete (strict) time matching for -A and -B.\n"
 	     "use -d one or more times to ramp up the diagnostic output.\n"
