@@ -835,13 +835,13 @@ check_glob_trailing_char(bool warn_only, qdesc_ct qdp) {
 	if (qdp->what_to_search == search_rdata) {
 		if (last_ch == '"')
 			return;		/* fine, but only for rdata */
-		msg = "a glob search argument should end either in a period,"
-			" a double quote\n"
-			"or certain glob special characters (*, ?, or ]).";
+		msg = "a glob search argument for rdata should end either"
+			" in a period,\n"
+			"a double quote, or certain glob special characters (*, ?, or ]).";
 	} else
-		msg = "a glob search argument should end either in a period"
-			" or certain glob\n"
-			"special characters (*, ?, or ]).";
+		msg = "a glob search argument for rrnames should end either"
+			" in a period\n"
+			"or certain glob special characters (*, ?, or ]).";
 	if (warn_only) {
 		if (!quiet)
 			fprintf(stderr, "Warning: %s\nYou may not get results"
