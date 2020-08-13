@@ -26,7 +26,7 @@
 #endif
 
 EXTERN	const char id_swclient[]	INIT("dnsdbflex");
-EXTERN	const char id_version[]		INIT("1.0.0");
+EXTERN	const char id_version[]		INIT("1.0.1");
 EXTERN	const char *program_name	INIT(NULL);
 EXTERN	const char jsonl_header[]	INIT("Accept: application/x-ndjson");
 EXTERN	const char status_noerror[]	INIT("NOERROR");
