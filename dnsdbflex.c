@@ -467,7 +467,7 @@ help(void) {
 	     "use -d one or more times to ramp up the diagnostic output.\n"
 	     "use -F to get batch mode output.\n"
 	     "use -T to get batch mode output with deduplicated rrtypes.\n"
-	     "use --force to force issue some possibly invalid or not useful queries.\n"
+	     "use --force to issue possibly invalid or non-useful queries.\n"
 	     "use -O # to skip this many results in what is returned.\n"
 	     "use -q for warning reticence.\n"
 	     "use -U to turn off SSL certificate verification.\n"
@@ -760,7 +760,7 @@ void
 query_launcher(qdesc_ct qdp, writer_t writer) {
 	struct pdns_fence fence = {};
 	query_t query = NULL;
-	char *url, sep;
+	char *url;
 
 	CREATE(query, sizeof(struct query));
 	query->writer = writer;
@@ -792,7 +792,7 @@ query_launcher(qdesc_ct qdp, writer_t writer) {
 		}
 	}
 
-	url = psys->url(query->command, &sep, &query->qd, &fence);
+	url = psys->url(query->command, NULL, &query->qd, &fence);
 	if (url == NULL)
 		my_exit(1);
 
@@ -811,7 +811,10 @@ check_printable_ascii(const char *name) {
 
 	while ((ch = *name++) != '\0')
 		if (!isprint(ch))
-			return "expression argument is not printable ASCII.\nUse \\DDD to encode non-printable characters, where DDD is the decimal value of the character";
+			return "expression argument is not printable ASCII.\n"
+				"Use \\DDD to encode non-printable "
+				"characters, where DDD is the decimal value "
+				"of the character";
 	return NULL;
 }
 
@@ -837,7 +840,8 @@ check_glob_trailing_char(bool warn_only, qdesc_ct qdp) {
 			return;		/* fine, but only for rdata */
 		msg = "a glob search argument for rdata should end either"
 			" in a period,\n"
-			"a double quote, or certain glob special characters (*, ?, or ]).";
+			"a double quote, or certain "
+			"glob special characters (*, ?, or ]).";
 	} else
 		msg = "a glob search argument for rrnames should end either"
 			" in a period\n"

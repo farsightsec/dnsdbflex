@@ -234,11 +234,12 @@ writer_func(char *ptr, size_t size, size_t nmemb, void *blob) {
 			if (eol != NULL)
 				*eol = '\0';
 
-			/* if the message (that's left) is just <html> then change it to
-			 * an HTTP Status code */
-			if (strcmp(message, "<html>") == 0) {
+			/* if the message (that's left) is just <html>,
+			 * change it to an HTTP Status code */
+			if (strcasecmp(message, "<html>") == 0) {
 				DESTROY(message);
-				asprintf(&message, "HTTP Status %ld", fetch->rcode);
+				asprintf(&message, "HTTP Status %ld",
+					 fetch->rcode);
 			}
 
 			/* only report the first response status (vs. -m). */

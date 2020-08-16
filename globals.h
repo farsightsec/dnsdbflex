@@ -44,7 +44,8 @@ EXTERN	long curl_ipresolve		INIT(CURL_IPRESOLVE_WHATEVER);
 #undef INIT
 #undef EXTERN
 
-#define MAX_VALUE_LEN 4096	/* maximum length of a regular expression or glob or exclusion */
+/* maximum length of a regular expression or glob or exclusion */
+#define MAX_VALUE_LEN 4096
 
 void debug(bool, const char *, ...);
 __attribute__((noreturn)) void my_exit(int);
