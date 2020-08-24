@@ -295,6 +295,7 @@ main(int argc, char *argv[]) {
 	argc -= optind;
 	if (argc != 0)
 		usage("there are no non-option arguments to this program");
+	argv = NULL;
 
 	if (qd.value == NULL)
 		usage("Need to provide a --regex or --glob option and"
@@ -594,7 +595,6 @@ read_configs(void) {
 
 		wordexp(*conf, &we, WRDE_NOCMD);
 		cf = strdup(we.we_wordv[0]);
-		assert(cf != NULL);
 		wordfree(&we);
 		if (access(cf, R_OK) == 0) {
 			DEBUG(1, true, "conf found: '%s'\n", cf);
@@ -765,6 +765,7 @@ query_launcher(qdesc_ct qdp, writer_t writer) {
 	CREATE(query, sizeof(struct query));
 	query->writer = writer;
 	query->qd = *qdp;
+	writer = NULL;
 	query->writer->query = query;
 	query->command = makepath(qdp);
 

@@ -91,6 +91,7 @@ create_fetch(query_t query, char *url) {
 	DEBUG(2, true, "fetch(%s)\n", url);
 	CREATE(fetch, sizeof *fetch);
 	fetch->query = query;
+	query = NULL;
 	fetch->easy = curl_easy_init();
 	if (fetch->easy == NULL) {
 		/* an error will have been output by libcurl in this case. */
@@ -99,6 +100,7 @@ create_fetch(query_t query, char *url) {
 		my_exit(1);
 	}
 	fetch->url = url;
+	url = NULL;
 	curl_easy_setopt(fetch->easy, CURLOPT_URL, fetch->url);
 	if (donotverify) {
 		curl_easy_setopt(fetch->easy, CURLOPT_SSL_VERIFYPEER, 0L);
