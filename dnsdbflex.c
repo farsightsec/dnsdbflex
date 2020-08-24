@@ -595,6 +595,7 @@ read_configs(void) {
 
 		wordexp(*conf, &we, WRDE_NOCMD);
 		cf = strdup(we.we_wordv[0]);
+		assert(cf != NULL);
 		wordfree(&we);
 		if (access(cf, R_OK) == 0) {
 			DEBUG(1, true, "conf found: '%s'\n", cf);
