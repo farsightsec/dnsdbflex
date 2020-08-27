@@ -878,9 +878,12 @@ static bool is_dnssec(const char *rrtype) {
 	return	(!strcmp(RRTYPE, "DS") || !strcmp(RRTYPE, "TYPE43") ||
 		 !strcmp(RRTYPE, "RRSIG") || !strcmp(RRTYPE, "TYPE46") ||
 		 !strcmp(RRTYPE, "NSEC") || !strcmp(RRTYPE, "TYPE47") ||
-		 !strcmp(RRTYPE, "DNSKEY") || !strcmp(RRTYPE, "TYPE47") ||
+		 !strcmp(RRTYPE, "DNSKEY") || !strcmp(RRTYPE, "TYPE48") ||
 		 !strcmp(RRTYPE, "NSEC3") || !strcmp(RRTYPE, "TYPE50") ||
 		 !strcmp(RRTYPE, "NSEC3PARAM") || !strcmp(RRTYPE, "TYPE51") ||
+		 !strcmp(RRTYPE, "CDS") || !strcmp(RRTYPE, "TYPE59") ||
+		 !strcmp(RRTYPE, "CDNSKEY") || !strcmp(RRTYPE, "TYPE60") ||
+		 !strcmp(RRTYPE, "TA") || !strcmp(RRTYPE, "TYPE32768") ||
 		 !strcmp(RRTYPE, "DLV") || !strcmp(RRTYPE, "TYPE32769") ||
 		 !strcmp(RRTYPE, "ANY-DNSSEC"));
 }
