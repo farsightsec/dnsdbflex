@@ -69,7 +69,6 @@ static char *makepath(qdesc_ct);
 static void query_launcher(qdesc_ct, writer_t);
 static const char *check_printable_ascii(const char *);
 static void check_glob_trailing_char(bool, qdesc_ct);
-static bool is_dnssec(const char *);
 
 /* Constants. */
 
@@ -263,10 +262,6 @@ main(int argc, char *argv[]) {
 			break;
 		case 't':
 			qd.rrtype = strdup(optarg);
-			/* enforce a limit here that
-			   the server would also enforce. */
-			if (is_dnssec(qd.rrtype))
-				usage("DNSSEC RRtypes are not supported");
 			break;
 		case 'T':
 			presentation = pres_batch_dedup_rrtype;
@@ -856,34 +851,4 @@ check_glob_trailing_char(bool warn_only, qdesc_ct qdp) {
 			" search.\n", msg);
 		my_exit(1);
 	}
-}
-
-
-/* check if argument is a DNSSEC rrtype (by name).
- *
- * returns true if so, else false.
- */
-static bool is_dnssec(const char *rrtype) {
-	if (rrtype == NULL)
-		return false;
-	/* convert rrtype to an upper-case equivalent in RRTYPE */
-	char RRTYPE[12];  /* maximum size of any of the values below++ */
-	if (strlen(rrtype) >= sizeof RRTYPE)
-		return false;	/* too long to be a DNSSEC type */
-	unsigned i;
-	for (i = 0; i < strlen(rrtype); i++)
-		RRTYPE[i] = (char)toupper(rrtype[i]);
-	RRTYPE[i] = '\0';
-
-	return	(!strcmp(RRTYPE, "DS") || !strcmp(RRTYPE, "TYPE43") ||
-		 !strcmp(RRTYPE, "RRSIG") || !strcmp(RRTYPE, "TYPE46") ||
-		 !strcmp(RRTYPE, "NSEC") || !strcmp(RRTYPE, "TYPE47") ||
-		 !strcmp(RRTYPE, "DNSKEY") || !strcmp(RRTYPE, "TYPE48") ||
-		 !strcmp(RRTYPE, "NSEC3") || !strcmp(RRTYPE, "TYPE50") ||
-		 !strcmp(RRTYPE, "NSEC3PARAM") || !strcmp(RRTYPE, "TYPE51") ||
-		 !strcmp(RRTYPE, "CDS") || !strcmp(RRTYPE, "TYPE59") ||
-		 !strcmp(RRTYPE, "CDNSKEY") || !strcmp(RRTYPE, "TYPE60") ||
-		 !strcmp(RRTYPE, "TA") || !strcmp(RRTYPE, "TYPE32768") ||
-		 !strcmp(RRTYPE, "DLV") || !strcmp(RRTYPE, "TYPE32769") ||
-		 !strcmp(RRTYPE, "ANY-DNSSEC"));
 }
