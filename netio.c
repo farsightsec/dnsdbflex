@@ -238,8 +238,9 @@ writer_func(char *ptr, size_t size, size_t nmemb, void *blob) {
 			 * change it to an HTTP Status code */
 			if (strcasecmp(message, "<html>") == 0) {
 				DESTROY(message);
-				asprintf(&message, "HTTP Status %ld",
-					 fetch->rcode);
+				if (asprintf(&message, "HTTP Status %ld",
+					     fetch->rcode) < 0)
+					my_panic(true, "asprintf");
 			}
 
 			/* only report the first response status (vs. -m). */
