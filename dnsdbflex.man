@@ -279,7 +279,7 @@ contains the user's API key (no default).
 .It Ev DNSDB_SERVER
 contains the URL of the DNSDB API server (default is <\fI\%https://api.dnsdb.info\fP>),
 and optionally the URI prefix for the database.
-.It Ev DNSDB_SYSTEM
+.It Ev DNSDBQ_SYSTEM
 contains the default value for the
 .Ar u
 option described above. Can only be "dnsdb2". If unset,
@@ -296,8 +296,8 @@ be used. If neither variable is present, the configuration file is consulted.
 .It Ev DNSDB_SERVER
 contains the URL of the DNSDB API server, and optionally a URI prefix to be
 used. If not set, the configuration file is consulted.
-.It Ev DNSDB_SYSTEM
-See DNSDB_SYSTEM in the FILES section above.
+.It Ev DNSDBQ_SYSTEM
+See DNSDBQ_SYSTEM in the FILES section above.
 .El
 .Sh "EXIT STATUS"
 Success (exit status zero) occurs if a connection could be established
