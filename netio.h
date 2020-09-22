@@ -24,13 +24,13 @@ typedef enum { method_none = 0, method_regex, method_glob } search_method_t;
 
 typedef enum { search_none = 0, search_rrnames, search_rdata } what_to_search_t;
 
-typedef enum { return_none = 0, return_terse, return_details } what_to_return_t;
+typedef enum { return_none = 0, return_terse, return_details } mode_to_return_t;
 
 /* query parameters descriptor. */
 struct qdesc {
 	search_method_t	  search_method;
 	what_to_search_t  what_to_search;
-	what_to_return_t  what_to_return;
+	mode_to_return_t  mode_to_return;
 	char		 *value;
 	char		 *exclude;
 	char		 *rrtype;

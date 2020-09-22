@@ -20,16 +20,16 @@
 .Sh SYNOPSIS
 .Nm dnsdbflex
 .Op Fl cdFjhqTUv46
-.Op Cm --glob Ar glob
-.Op Cm --regex Ar regular_expression
 .Op Cm --exclude Ar glob|regular_expression
+.Op Cm --force
+.Op Cm --glob Ar glob
+.Op Cm --mode Ar terse
+.Op Cm --regex Ar regular_expression
 .Op Fl A Ar timestamp
 .Op Fl B Ar timestamp
-.Op Cm --force
 .Op Fl L Ar output_limit
 .Op Fl l Ar query_limit
 .Op Fl O Ar offset
-.Op Fl r Ar return_what
 .Op Fl s Ar search_what
 .Op Fl t Ar rrtype
 .Op Fl u Ar server_sys
@@ -53,26 +53,32 @@ Search expressions must match the the data indexed in DNSDB's flexible
 search database.  All DNS rrnames end in a dot.  All rdata
 indexed in the database will end in a dot if it's a host name or will
 end in a double quote for other data.  A search expression that does
-not conform with that may be a wasted query.  For example, dnsdbflex --glob '*.fsi.io'
+not conform with that may be a wasted query.  For example,
+.Nm dnsdbflex --glob '*.fsi.io'
 will not match anything because globs are right-anchored and that
 search expression does not end in a dot.  In glob search expressions,
-dnsdbflex normally detects such violations and disallows them.  Add a
-trailing dot to match something, dnsdbflex --glob '*.fsi.io.'
+.Nm dnsdbflex
+normally detects such violations and disallows them.  Add a
+trailing dot to match something,
+.Nm dnsdbflex --glob '*.fsi.io.'
 .Pp
-dnsdbflex doesn't detect such violations in regex search expressions.
-For example, dnsdbflex --regex '.*\\.fsi\\.io$'
-will not match anything but dnsdbflex --regex '.*\\.fsi\\.io\\.$'
+.Nm dnsdbflex
+doesn't detect such violations in regex search expressions.
+For example,
+.Nm dnsdbflex --regex '.*\\.fsi\\.io$'
+will not match anything but
+.Nm dnsdbflex --regex '.*\\.fsi\\.io\\.$'
 does (note the dot before the dollar sign).
 .Pp
 Search expressions must contain 7 bit clean, printable ASCII
-characters.  Use PUNYCODE IDN encoding to search for IDN domain names.
+characters.  Use Punycode IDN encoding to search for IDN domain names.
 Use \\DDD (where DDD is the decimal value of the character) to match
 non-printable characters in rdata strings.
 .Pp
 See documentation referenced by <\fI\%https://api.dnsdb.info\fP> for a description of the Farsight Compatible Regular Expression (FCRE) syntax and the full wildcarding syntax, as well as more examples.
 .Pp
 You'll need to get an API key from Farsight to use
-.Ic dnsdbflex
+.Nm dnsdbflex
 with DNSDB.  Note that certain types of API keys may not be allowed to use this API, in which case,
 .Nm dnsdbflex
 will fail with error message "The type of API key is not allowed to
@@ -84,17 +90,6 @@ Either
 or
 .Nm --regex
 must be specified. Both cannot be specified at the same time.
-.It Cm --glob Ar glob
-Specify that
-.Nm dnsdbflex
-should do a glob search.
-Only the * and [] glob operators are supported.  Can abbreviate as
-.Ic --g .
-.It Cm --regex Ar regular_expression
-Specify that
-.Nm dnsdbflex
-should do a regular expression search in the FCRE syntax.  Can abbreviate as
-.Ic --r .
 .It Cm --exclude Ar glob|regular_expression
 Filters out results selected by a glob or regular expression.
 If
@@ -107,6 +102,34 @@ If
 was specified, then
 .Nm --exclude
 takes a regular expression.
+.It Cm --force
+Issue search queries even if rejected by
+.Ic dnsdbflex's
+pattern checks.
+.It Cm --glob Ar glob
+Specify that
+.Nm dnsdbflex
+should do a glob search.
+Only the * and [] glob operators are supported.  Can abbreviate as
+.Ic --g .
+.It Cm --mode Ar terse
+Specify mode of information to return in results.
+.Bl -tag -width Ds
+.It Cm terse
+Can abbreviate as 't'.  This is the only value currently supported and
+it is the default, so the
+.Fl --mode
+option need not be specified.
+.Pp
+For rrnames queries, returns the rrname and rrtype.
+.Pp
+For rdata queries, returns normalized rdata, rrtype, and raw_rdata.
+.El
+.It Cm --regex Ar regular_expression
+Specify that
+.Nm dnsdbflex
+should do a regular expression search in the FCRE syntax.  Can abbreviate as
+.Ic --r .
 .It Fl A Ar timestamp
 Specify a backward time fence. Only results seen by the passive DNS
 on or after this time will be selected. See also
@@ -131,7 +154,11 @@ enable debug mode.  Repeat for more debug output.
 .It Fl F
 specify batch output mode, outputting results in the batch format that
 .Nm dnsdbq -f
-can read.  Does include the rrtype in the batch file format queries.
+can read.
+.Fl F
+includes the rrtype in the batch file format queries -- in contrast to
+.Fl T
+described below.
 .Pp
 If searching for rdata, if an rdata value is not printable or contains
 whitespace, it will emit it using the raw_rdata hex value and output a
@@ -140,10 +167,6 @@ comment line giving the non-raw format.
 See
 .Xr dnsdbq 1
 for documentation of the batch format.
-.It Cm --force
-Issue search queries even if rejected by
-.Ic dnsdbflex's
-pattern checks.
 .It Fl h
 emit usage and quit.
 .It Fl j
@@ -162,47 +185,43 @@ server may use its default limit.
 clamps the number of objects per response to
 .Ic output_limit .
 The default is no output limit.
-.It Fl r Ar terse|details
-Tells
-.Nm dnsdbflex
-what how verbuse to be in returning information.
-.Bl -tag -width Ds
-.It Cm terse
-for rrnames queries, return only the rrname and rrtype.  For rdata queries, return normalized rdata, raw_rdata, and rrtype.   Can abbreviate as 't'.
-.It Cm details
-also return count, time_first, and time_last.  Can abbreviate as 'd'.
-.El
 .It Fl O Ar offset
-to offset by #offset the results returned by the query.
-This gives you incremental results transfers.
-Cannot be negative. The default is 0.
+to offset by #offset the results returned by the query.  This gives
+you approximate incremental results transfers.  Results can be
+reordered between queries, so using progressively higher offsets is
+not guaranteed to return all results without duplicates or gaps.
+Offset cannot be negative and the default is 0.
 .It Fl q
 (quiet) suppresses sending warning messages to stderr.
 .It Fl s Ar rrnames|rdata
 what data to search.
 .Bl -tag -width Ds
 .It Cm rrnames
-Search in the rrnames part of DNS queries, aka the left-hand side.  Can abbreviate as 'n'.
+Search in the rrnames part of DNS records, aka the left-hand side.  Can abbreviate as 'n'.  This is the default.
 .It Cm rdata
-Search in the rdata part of DNS queries, aka the right-hand side.  Can abbreviate as 'd'.
+Search in the rdata part of DNS records, aka the right-hand side.  Can abbreviate as 'd'.
 .El
 .It Fl t Ar rrtype
 specify the resource record type desired.  Default is ANY.  Valid
 values include those defined in DNS RFCs, including ANY, except DNSSEC
-types are not allowed (DS, RRSIG, NSEC, DNSKEY, NSEC3, NSEC3PARAM, and
-DLV resource record types).
+types are not allowed (ANY-DNSSEC, CDNSKEY, CDS, DLV, DNSKEY, DS,
+NSEC, NSEC3, NSEC3PARAM, and RRSIG resource record types).  Also valid
+are TYPE# values.
 .It Fl T
 Like
 .Fl F
-but does not include the rrtype in the batch file format queries.
+but does not include the rrtype in the batch file queries.
 This allows pivots to match against all available rrtypes.  The batch
 output will also include a comment for each line including the rrtype.
 .It Fl u Ar server_sys
-specifies the syntax of the RESTful URL, default is "dnsdb2".
+specifies the syntax of the RESTful URL.  The only system currently
+supported is "dnsdb2", which is the default.
 .It Fl U
 turns off TLS certificate verification (unsafe).
 .It Fl v
-report the version of dnsdbflex and exit.
+report the version of
+.Nm dnsdbflex
+ and exit.
 .It Fl 4
 force connecting to the DNSDB server via IPv4.
 .It Fl 6
@@ -243,23 +262,26 @@ $ dnsdbflex ... -A 1485284066
 .Ed
 .Sh EXAMPLES
 .Pp
-.Bd -literal -offset 4n
+.Bd -literal -offset 2n
 # Regular expression search of all rrnames that contain a coke label,
-# for all rrtypes, with details, limit of 10 results.
+# for all rrtypes, limit of 10 results.
 $ dnsdbflex --regex '.*\\.coke\\..*' -l 10
 
 # Same query without using default values
-$ dnsdbflex --regex '.*\\.coke\\..*' -l 10 -s rrnames -r details
+$ dnsdbflex --regex '.*\\.coke\\..*' -l 10 -s rrnames --mode terse
 
-# Glob search of all names that contain a coke label
-$ dnsdbflex --glob '*.coke.*' -l 10
+# Glob search of all names that contain a coke label and have an 'A' RRType.
+$ dnsdbflex --glob '*.coke.*' -l 10 -t A
 
-# Pivot those results into dnsdbq for full DNSDB API results in json form.
-# Note that up to 11 DNSDB query quota units will be consumed,
-# 1 by dnsdbflex and 10 by dnsdbq.
-$ dnsdbflex --glob '*.coke.*' -l 10 | dnsdbq -f -j
+# Pivot those results into dnsdbq for full DNSDB API results in json
+# form.  Note that up to 11 DNSDB query quota units will be consumed,
+# 1 by dnsdbflex and 10 by dnsdbq.  If we did not specify the RRType
+# to dnsdbflex, then it might return more than 10 results (one for
+# each RRType for each name) and we'd use more than 11 DNSDB query
+# quota units.
+$ dnsdbflex --glob '*.coke.*' -l 10 -t A -F | dnsdbq -f -j
 
-# Get all names containing "coke" but then exclude all those containing "diet".
+# Get names containing "coke" but then exclude all those containing "diet".
 $ dnsdbflex --glob '*.coke.*' --exclude '.*diet.*' -l 10
 
 # Same query, but using regular expressions
@@ -267,9 +289,7 @@ $ dnsdbflex --regex '.*\\.coke\\..*' --exclude '.*\\.diet\\..*' -l 10
 .Ed
 .Pp
 .Sh FILES
-.Ic ~/.isc-dnsdb-query.conf ,
-.Ic ~/.dnsdb-query.conf ,
-.Ic /etc/isc-dnsdb-query.conf ,
+.Ic ~/.dnsdb-query.conf
 or
 .Ic /etc/dnsdb-query.conf :
 configuration file which should contain:
@@ -286,6 +306,12 @@ option described above. Can only be "dnsdb2". If unset,
 .Nm dnsdbflex
 will probe for any configured system.
 .El
+.Pp
+For backwards compability,
+.Ic ~/.isc-dnsdb-query.conf
+and
+.Ic /etc/isc-dnsdb-query.conf
+are also valid, but deprecated.
 .Sh ENVIRONMENT
 The following environment variables affect the execution of
 .Nm :

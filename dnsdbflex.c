@@ -109,22 +109,25 @@ main(int argc, char *argv[]) {
 	/* All the getopt_long switches use the following enum */
 	static enum {
 		long_opt_none,		/* nothing specified */
-		long_opt_regex,		/* --regex */
-		long_opt_glob,		/* --glob */
 		long_opt_exclude,	/* --exclude */
-		long_opt_force		/* --force */
+		long_opt_force,		/* --force */
+		long_opt_glob,		/* --glob */
+		long_opt_mode,		/* --mode */
+		long_opt_regex		/* --regex */
 	} long_opt_switch = long_opt_none;
 
 	static struct option long_options[] = {
 		/* NAME	    ARGUMENT	       FLAG  SHORTNAME */
-		{"regex",   required_argument, (int*)&long_opt_switch,
-		 long_opt_regex},
-		{"glob",    required_argument, (int*)&long_opt_switch,
-		 long_opt_glob},
 		{"exclude", required_argument, (int*)&long_opt_switch,
 		 long_opt_exclude},
 		{"force",   no_argument,       (int*)&long_opt_switch,
 		 long_opt_force},
+		{"glob",    required_argument, (int*)&long_opt_switch,
+		 long_opt_glob},
+		{"mode",    required_argument, (int*)&long_opt_switch,
+		 long_opt_mode},
+		{"regex",   required_argument, (int*)&long_opt_switch,
+		 long_opt_regex},
 		{NULL,	    0,			NULL, 0}
 	};
 
@@ -189,6 +192,29 @@ main(int argc, char *argv[]) {
 			case long_opt_force:
 				force_query = true;
 				break;
+			case long_opt_mode:
+				sz = strlen(optarg);
+				if (sz == 0)
+					usage("The --mode option requires"
+					      " a non-empty argument");
+                                /* allow abbreviations t for terse and d for details */
+                                if (strcmp(optarg, "terse") == 0 ||
+                                    strcmp(optarg, "t") == 0)
+                                        qd.mode_to_return = return_terse;
+#ifdef DETAILS_SUPPORTED
+                                else if (strcmp(optarg, "details") == 0 ||
+                                         strcmp(optarg, "d") == 0)
+                                        qd.mode_to_return = return_details;
+#endif
+                                else
+#ifdef DETAILS_SUPPORTED
+                                        usage("Illegal mode value, "
+                                              "must be 'terse'|'t' or 'details'|'d'");
+#else
+				        usage("Illegal mode value, "
+                                              "must be 'terse'|'t'");
+#endif
+                                break;
 			case long_opt_none: /* FALLTHROUGH */
 			default:
 				/* NOTREACHED */
@@ -235,18 +261,6 @@ main(int argc, char *argv[]) {
 			break;
 		case 'q':
 			quiet = true;
-			break;
-		case 'r':
-			/* allow abbreviations t for terse and d for details */
-			if (strcmp(optarg, "terse") == 0 ||
-			    strcmp(optarg, "t") == 0)
-				qd.what_to_return = return_terse;
-			else if (strcmp(optarg, "details") == 0 ||
-			    strcmp(optarg, "d") == 0)
-				qd.what_to_return = return_details;
-			else
-				usage("Illegal what to return, "
-				      "must be 'terse'|'t' or 'details'|'d'");
 			break;
 		case 's':
 			/* allow abbreviations n for rrnames and d for rdata */
@@ -453,7 +467,11 @@ help(void) {
 	     "\t\t[--glob glob]\n"
 	     "\t}\n"
 	     "\t[--exclude glob|regex]\n"
-	     "\t[-r terse|t|details|d]\n"
+#ifdef DETAILS_SUPPORTED
+	     "\t[--mode terse|t|details|d]\n"
+#else
+	     "\t[--mode terse|t]\n"
+#endif
 	     "\t[-s rrnames|n|rdata|d]\n"
 	     "\t[-t rrtype]\n"
 	     "for -A and -B, use absolute format YYYY-MM-DD[ HH:MM:SS],\n"
@@ -709,7 +727,6 @@ makepath(qdesc_ct qdp)
 {
 	const char *search_method_s;
 	const char *what_to_search_s;
-	const char *what_to_return_s;
 	char *command;
 	int x;
 
@@ -727,23 +744,22 @@ makepath(qdesc_ct qdp)
 	else
 		my_panic(true, "bad what_to_search");
 
-	if (qdp->what_to_return == return_terse)
-		what_to_return_s = "terse";
-	else if (qdp->what_to_return == return_details)
-		what_to_return_s = "details";
-	else
-		my_panic(true, "bad what_to_return");
-
+#ifdef DETAILS_SUPPORTED
+// use qdp->mode_to_return as a URL query parameter
+//	if (qdp->mode_to_return == return_terse)
+//	else if (qdp->mode_to_return == return_details)
+//	else my_panic(true, "bad mode_to_return");
+#endif
 	/* alternatively, could explicitly default to rrtype=ANY */
 	if (qdp->rrtype != NULL)
-		x = asprintf(&command, "%s/%s/%s/%s/%s",
-			     search_method_s, what_to_search_s,
-			     what_to_return_s, qdp->value,
-			     qdp->rrtype);
-	else
 		x = asprintf(&command, "%s/%s/%s/%s",
 			     search_method_s, what_to_search_s,
-			     what_to_return_s, qdp->value);
+			     qdp->value,
+			     qdp->rrtype);
+	else
+		x = asprintf(&command, "%s/%s/%s",
+			     search_method_s, what_to_search_s,
+			     qdp->value);
 	if (x < 0)
 		my_panic(true, "asprintf");
 
