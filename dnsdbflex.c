@@ -134,7 +134,11 @@ main(int argc, char *argv[]) {
 	/* process the command line options. */
 	while ((ch = getopt_long(argc, argv,
 				 "jr:n:u:p:t:b:k:O:s:FT"
+#if 0 /* disable output limit feature */
+				 "dhqUvA:B:l:c46",
+#else
 				 "dhqUvA:B:L:l:c46",
+#endif
 				 long_options, &option_index))
 	       != -1)
 	{
@@ -250,11 +254,13 @@ main(int argc, char *argv[]) {
 			    (qd.query_limit < 0))
 				usage("-l must be zero or positive");
 			break;
+#if 0 /* disable output limit feature */
 		case 'L':
 			if (!parse_long(optarg, &qd.output_limit) ||
 			    (qd.output_limit <= 0))
 				usage("-L must be positive");
 			break;
+#endif
 		case 'O':
 			if (!parse_long(optarg, &qd.offset) || (qd.offset < 0))
 				usage("-O must be zero or positive");
@@ -460,7 +466,11 @@ static void
 help(void) {
 	printf("usage: %s [-cdFhjqsTUv46] \n",
 	       program_name);
+#if 0 /* disable output limit feature */
 	puts("\t[-l QUERY-LIMIT] [-L OUTPUT-LIMIT] [-A after] [-B before]\n"
+#else
+	puts("\t[-l QUERY-LIMIT] [-A after] [-B before]\n"
+#endif
 	     "\t[-u system] [-O offset]\n"
 	     "\t{\n"
 	     "\t\t[--regex regex] |\n"

@@ -27,7 +27,6 @@
 .Op Cm --regex Ar regular_expression
 .Op Fl A Ar timestamp
 .Op Fl B Ar timestamp
-.Op Fl L Ar output_limit
 .Op Fl l Ar query_limit
 .Op Fl O Ar offset
 .Op Fl s Ar search_what
@@ -181,10 +180,6 @@ API server will return the maximum limit of results allowed.  If
 .Fl l ,
 is not specified, then the query will not specify a limit, and the DNSDB API
 server may use its default limit.
-.It Fl L Ar output_limit
-clamps the number of objects per response to
-.Ic output_limit .
-The default is no output limit.
 .It Fl O Ar offset
 to offset by #offset the results returned by the query.  This gives
 you approximate incremental results transfers.  Results can be
