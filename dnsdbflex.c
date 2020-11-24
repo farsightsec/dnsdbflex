@@ -344,8 +344,9 @@ main(int argc, char *argv[]) {
 		qd.output_limit = qd.query_limit;
 
 	if (qd.after != 0 && qd.before != 0) {
-		if (qd.after > qd.before)
-			usage("-A value must be before -B value (for now)");
+		if (qd.complete && qd.after > qd.before)
+			usage("-A value must be before -B value"
+			      " if using complete time matching");
 	}
 	if (qd.complete && qd.after == 0 && qd.before == 0)
 		usage("-c without -A or -B makes no sense.");
