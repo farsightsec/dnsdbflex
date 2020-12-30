@@ -15,22 +15,24 @@
  */
 
 dnsdbflex is a pure C99 program that accesses passive DNS database systems such as:
-	* the DNSDB Flex API server at Farsight Security
+    * the DNSDB Flex API server at Farsight Security
 
 An API key is required for operation.
 
 The dnsdbflex executable has the following dependencies:
 
-Dependencies:
-	jansson (2.5 or later)
-	libcurl (7.28 or later)
-	modern compiler (clang or GCC)
+Dependencies needed:
+    jansson (2.5 or later)
+    libcurl (7.28 or later)
+    modern compiler (clang or GCC)
 
-On Linux (Debian 8):
+Installing dependencies:
+
+    On Debian 8 Linux:
 	apt-get install libcurl4-openssl-dev
 	apt-get install libjansson-dev
 
-On Linux (CentOS 6):
+    On CentOS 6 Linux:
 	# Based on PHP instructions for installing libcurl...
 	wget http://curl.haxx.se/download/curl-7.28.1.tar.gz
 	tar xvzf curl-7.28.1.tar.gz
@@ -50,65 +52,88 @@ On Linux (CentOS 6):
 	echo /usr/local/lib >> /etc/ld.so.conf.d/local.conf
 	ldconfig
 
-On FreeBSD 10:
-	pkg install curl jansson
+    On CentOS 7 Linux:
+	yum install libcurl-devel.x86_64
+	yum install jansson-devel.x86_64
+	yum install centos-release-scl
+	yum install devtoolset-8
+	scl enable devtoolset-8 bash
+	# do the build from that bash
 
-On macOS:
-	brew install jansson
-
-        If you want an almost static dnsdbflex binary on macOS, that
-        is, one without any non-System library dependencies, you can
-        rebuild dnsdbflex with a static jansson library.  That binary
-        could then be deployed on any identical macOS version and
-        architecture.
-
-        1. Find the static jansson library, probably
-           /usr/local/lib/libjansson.a as installed by brew.
-        2. Change the Makefile's line
-              JANSLIBS = -L/usr/local/lib -ljansson
-           to instead specify the static library location, probably to:
-              JANSLIBS = /usr/local/lib/libjansson.a
-        3. Then run make
-
-Getting Started
-	Add the API key to ~/.dnsdb-query.conf in the below given format,
-	APIKEY="YOURAPIKEYHERE"
-
-	If you don't have an API key, you may qualify for a free one:
-	https://www.farsightsecurity.com/
-
-
-The three optional filter scripts require the "jq" command-line processor:
-  filter_rdata_json_to_csv.sh
-  filter_rrnames_json_to_csv.sh
-  filter_rdata_raw_json_to_batch.sh
-
-jq is available in source from https://stedolan.github.io/jq/
-
-    On Linux (Debian 8 and higher):
-            apt-get install jq
-
-    On macOS:
-            brew install jq
+    On CentOS 8 Linux:
+	dnf install gcc
+	dnf install jansson.x86_64 jansson-devel.x86_64
+	dnf install libcurl-devel.x86_64
 
     On FreeBSD 10:
-            pkg install jq
+	pkg install curl jansson
 
-All three scripts take dnsdbflex json output as input and produce
-different outputs.
+    On macOS:
+	brew install jansson
 
-filter_rdata_json_to_csv.sh
+Building and installing:
 
-        Takes JSON produced by `dnsdbflex -s rdata` and produces CSV
-        output.
+    (Assumes you have "git")
 
-filter_rrnames_json_to_csv.sh
+    git clone https://github.com/farsightsec/dnsdbflex.git
+    cd dnsdbflex
+    make install clean
 
-        Takes JSON produced by `dnsdbflex -s rrnames` and produces CSV
-        output.
+    On macOS, if you want an almost static dnsdbflex binary on macOS,
+    that is, one without any non-System library dependencies, you can
+    rebuild dnsdbflex with a static jansson library.  That binary could
+    then be deployed on any identical macOS version and architecture.
 
-filter_rdata_raw_json_to_batch.sh
+	1. Find the static jansson library, probably
+	   /usr/local/lib/libjansson.a as installed by brew.
+	2. Change the Makefile's line
+		JANSLIBS = -L/usr/local/lib -ljansson
+	    to instead specify the static library location, probably to:
+		JANSLIBS = /usr/local/lib/libjansson.a
+	3. Then run make
 
-        Takes JSON produced by `dnsdbflex -s rdata` and produces
-        dnsdbq batch file input data.  This is useful if dnsdbflex was
-        run in -j mode, but you decide you want output from -F more.
+Getting Started
+    Add the API key to ~/.dnsdb-query.conf in the below given format,
+    APIKEY="YOURAPIKEYHERE"
+
+    If you don't have an API key, you may qualify for a free one:
+    https://www.farsightsecurity.com/dnsdb-community-edition/
+
+There are three optional filter scripts which take dnsdbflex json
+output as input and produce different outputs.
+
+* filter_rdata_json_to_csv.sh
+
+    Takes JSON produced by `dnsdbflex -s rdata` and produces CSV
+    output.
+
+* filter_rrnames_json_to_csv.sh
+
+    Takes JSON produced by `dnsdbflex -s rrnames` and produces CSV
+    output.
+
+* filter_rdata_raw_json_to_batch.sh
+
+    Takes JSON produced by `dnsdbflex -s rdata` and produces dnsdbq
+    batch file input data.  This is useful if dnsdbflex was run in -j
+    mode, but you decide you want output from -F more.
+
+The three optional filter scripts require the "jq" command-line processor.
+jq is available in source from https://stedolan.github.io/jq/
+To install jq:
+
+    On Linux (Debian 8 and higher):
+	apt-get install jq
+
+    On CentOS 7 Linux:
+	yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+	yum install jq
+
+    On CentOS 8 Linux:
+	dnf install jq
+
+    On macOS:
+	brew install jq
+
+    On FreeBSD 10:
+	pkg install jq
