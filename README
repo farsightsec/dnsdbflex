@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2020 by Farsight Security, Inc.
+ * Copyright (c) 2014-2021 by Farsight Security, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-dnsdbflex is a pure C99 program that accesses passive DNS database systems such as:
-    * the DNSDB Flex API server at Farsight Security
+Table of Contents:
 
-An API key is required for operation.
+    * Introduction
+    * Dependencies needed
+    * Installing dependencies
+    * Building and installing
+    * Getting Started
 
-The dnsdbflex executable has the following dependencies:
+Introduction:
+
+    dnsdbflex is a pure C99 program that accesses passive DNS database systems such as:
+        * the DNSDB Flex API server at Farsight Security
+
+    An API key is required for operation.
 
 Dependencies needed:
     jansson (2.5 or later)
@@ -92,48 +100,54 @@ Building and installing:
 		JANSLIBS = /usr/local/lib/libjansson.a
 	3. Then run make
 
-Getting Started
+Getting Started:
     Add the API key to ~/.dnsdb-query.conf in the below given format,
-    APIKEY="YOURAPIKEYHERE"
+    DNSDB_API_KEY="YOURAPIKEYHERE"
 
     If you don't have an API key, you may qualify for a free one:
     https://www.farsightsecurity.com/dnsdb-community-edition/
 
-There are three optional filter scripts which take dnsdbflex json
-output as input and produce different outputs.
 
-* filter_rdata_json_to_csv.sh
+Optional Filter Scripts:
 
-    Takes JSON produced by `dnsdbflex -s rdata` and produces CSV
-    output.
+    There are three optional filter scripts which take dnsdbflex json
+    output as input and produce different outputs.  These are not
+    installed by default, as they are primarily examples to learn
+    about post-processing the dnsdbflex outputs.
 
-* filter_rrnames_json_to_csv.sh
+    * filter_rdata_json_to_csv.sh
 
-    Takes JSON produced by `dnsdbflex -s rrnames` and produces CSV
-    output.
+        Takes JSON produced by `dnsdbflex -s rdata` and produces CSV
+        output.
 
-* filter_rdata_raw_json_to_batch.sh
+    * filter_rrnames_json_to_csv.sh
 
-    Takes JSON produced by `dnsdbflex -s rdata` and produces dnsdbq
-    batch file input data.  This is useful if dnsdbflex was run in -j
-    mode, but you decide you want output from -F more.
+        Takes JSON produced by `dnsdbflex -s rrnames` and produces CSV
+        output.
 
-The three optional filter scripts require the "jq" command-line processor.
-jq is available in source from https://stedolan.github.io/jq/
-To install jq:
+    * filter_rdata_raw_json_to_batch.sh
 
-    On Linux (Debian 8 and higher):
-	apt-get install jq
+        Takes JSON produced by `dnsdbflex -s rdata` and produces dnsdbq
+        batch file input data.  This is useful if dnsdbflex was run in -j
+        mode, but you decide you want output from -F more.
 
-    On CentOS 7 Linux:
-	yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-	yum install jq
+    The three optional filter scripts require the "jq" command-line processor.
+    jq is available in source from https://stedolan.github.io/jq/
 
-    On CentOS 8 Linux:
-	dnf install jq
+    To install jq:
 
-    On macOS:
-	brew install jq
+        On Linux (Debian 8 and higher):
+            apt-get install jq
 
-    On FreeBSD 10:
-	pkg install jq
+        On CentOS 7 Linux:
+            yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+            yum install jq
+
+        On CentOS 8 Linux:
+            dnf install jq
+
+        On macOS:
+            brew install jq
+
+        On FreeBSD 10:
+            pkg install jq

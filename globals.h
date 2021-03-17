@@ -26,7 +26,7 @@
 #endif
 
 EXTERN	const char id_swclient[]	INIT("dnsdbflex");
-EXTERN	const char id_version[]		INIT("1.0.4");
+EXTERN	const char id_version[]		INIT("1.0.5");
 EXTERN	const char *program_name	INIT(NULL);
 EXTERN	const char jsonl_header[]	INIT("Accept: application/x-ndjson");
 EXTERN	const char status_noerror[]	INIT("NOERROR");
@@ -47,9 +47,7 @@ EXTERN	long curl_ipresolve		INIT(CURL_IPRESOLVE_WHATEVER);
 /* maximum length of a regular expression or glob or exclusion */
 #define MAX_VALUE_LEN 4096
 
-void debug(bool, const char *, ...);
 __attribute__((noreturn)) void my_exit(int);
 __attribute__((noreturn)) void my_panic(bool, const char *);
-const char *or_else(const char *, const char *);
 
 #endif /*GLOBALS_H_INCLUDED*/

@@ -17,10 +17,12 @@
 #ifndef DEFS_H_INCLUDED
 #define DEFS_H_INCLUDED 1
 
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
 #include <string.h>
 
 #define DEFAULT_SYS "dnsdb2"
-#define	MAX_JOBS 8
 #define DNSDBQ_SYSTEM "DNSDBQ_SYSTEM"
 
 #define CREATE(p, s) if ((p) != NULL) { my_panic(false, "non-NULL ptr"); } \
@@ -28,5 +30,27 @@
 	else { memset((p), 0, s); }
 #define DESTROY(p) { if ((p) != NULL) { free(p); (p) = NULL; } }
 #define DEBUG(ge, ...) { if (debug_level >= (ge)) debug(__VA_ARGS__); }
+
+/* or_else -- return one pointer or else the other.
+ */
+static inline const char *
+or_else(const char *p, const char *or_else) {
+	if (p != NULL)
+		return p;
+	return or_else;
+}
+
+/* debug -- at the moment, dump to stderr.
+ */
+static inline void
+debug(bool want_header, const char *fmtstr, ...) {
+	va_list ap;
+
+	va_start(ap, fmtstr);
+	if (want_header)
+		fputs("debug: ", stderr);
+	vfprintf(stderr, fmtstr, ap);
+	va_end(ap);
+}
 
 #endif /*DEFS_H_INCLUDED*/

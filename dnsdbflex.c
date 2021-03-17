@@ -2,7 +2,7 @@
  * Copyright (c) 2014-2020 by Farsight Security, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -201,24 +201,24 @@ main(int argc, char *argv[]) {
 				if (sz == 0)
 					usage("The --mode option requires"
 					      " a non-empty argument");
-                                /* allow abbreviations t for terse and d for details */
-                                if (strcmp(optarg, "terse") == 0 ||
-                                    strcmp(optarg, "t") == 0)
-                                        qd.mode_to_return = return_terse;
+				/* allow abbreviations t for terse and d for details */
+				if (strcmp(optarg, "terse") == 0 ||
+				    strcmp(optarg, "t") == 0)
+					qd.mode_to_return = return_terse;
 #ifdef DETAILS_SUPPORTED
-                                else if (strcmp(optarg, "details") == 0 ||
-                                         strcmp(optarg, "d") == 0)
-                                        qd.mode_to_return = return_details;
+				else if (strcmp(optarg, "details") == 0 ||
+					 strcmp(optarg, "d") == 0)
+					qd.mode_to_return = return_details;
 #endif
-                                else
+				else
 #ifdef DETAILS_SUPPORTED
-                                        usage("Illegal mode value, "
-                                              "must be 'terse'|'t' or 'details'|'d'");
+					usage("Illegal mode value, "
+					      "must be 'terse'|'t' or 'details'|'d'");
 #else
-				        usage("Illegal mode value, "
-                                              "must be 'terse'|'t'");
+					usage("Illegal mode value, "
+					      "must be 'terse'|'t'");
 #endif
-                                break;
+				break;
 			case long_opt_none: /* FALLTHROUGH */
 			default:
 				/* NOTREACHED */
@@ -404,19 +404,6 @@ main(int argc, char *argv[]) {
 	my_exit(exit_code);
 }
 
-/* debug -- at the moment, dump to stderr.
- */
-void
-debug(bool want_header, const char *fmtstr, ...) {
-	va_list ap;
-
-	va_start(ap, fmtstr);
-	if (want_header)
-		fputs("debug: ", stderr);
-	vfprintf(stderr, fmtstr, ap);
-	va_end(ap);
-}
-
 /* my_exit -- close or destroy global objects, then exit.
  */
 __attribute__((noreturn)) void
@@ -446,15 +433,6 @@ my_panic(bool want_perror, const char *s) {
 	else
 		fprintf(stderr, "%s\n", s);
 	my_exit(1);
-}
-
-/* or_else -- return one pointer or else the other.
- */
-const char *
-or_else(const char *p, const char *or_else) {
-	if (p != NULL)
-		return p;
-	return or_else;
 }
 
 /* Private. */
