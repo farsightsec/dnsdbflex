@@ -316,10 +316,24 @@ $ dnsdbflex... -B 2013-01-22
 .Ic ~/.dnsdb-query.conf
 or
 .Ic /etc/dnsdb-query.conf :
-configuration file which should contain:
+configuration file which can specify the API key, etc. variables. The
+first of these which is readable will be used, alone, in its
+entirety.  See the
+.Ic DNSDBQ_CONFIG_FILE
+environment variable below which can specify a different configuration
+file to use.
+.Pp
+For backwards compability,
+.Ic ~/.isc-dnsdb-query.conf
+and
+.Ic /etc/isc-dnsdb-query.conf
+are also valid, but deprecated.
+.Pp
+The variables which can be set in the configuration file are as
+follows:
 .Bl -tag -width ".Ev DNSDB_API_KEY , APIKEY"
-.It Ev APIKEY
-contains the user's API key (no default).
+.It Ev DNSDB_API_KEY , APIKEY
+contains the user's DNSDB apikey (no default).
 .It Ev DNSDB_SERVER
 contains the URL of the DNSDB API server (default is <\fI\%https://api.dnsdb.info\fP>),
 and optionally the URI prefix for the database.
@@ -330,19 +344,15 @@ option described above. Can only be "dnsdb2". If unset,
 .Nm dnsdbflex
 will probe for any configured system.
 .El
-.Pp
-For backwards compability,
-.Ic ~/.isc-dnsdb-query.conf
-and
-.Ic /etc/isc-dnsdb-query.conf
-are also valid, but deprecated.
 .Sh ENVIRONMENT
 The following environment variables affect the execution of
 .Nm :
-.Bl -tag -width ".Ev DNSDB_API_KEY , APIKEY"
-.It Ev DNSDB_API_KEY , APIKEY
-contains the user's API key. If DNSDB_API_KEY is not present, then APIKEY will
-be used. If neither variable is present, the configuration file is consulted.
+.Bl -tag -width ".Ev DNSDBQ_CONFIG_FILE"
+.It Ev DNSDBQ_CONFIG_FILE
+specifies the configuration file to use, overriding the internal search list.
+.It Ev DNSDB_API_KEY
+contains the user's apikey. The older APIKEY environment variable has
+been retired, though it can still be used in the configuration file.
 .It Ev DNSDB_SERVER
 contains the URL of the DNSDB API server, and optionally a URI prefix to be
 used. If not set, the configuration file is consulted.

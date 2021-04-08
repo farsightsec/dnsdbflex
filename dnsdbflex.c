@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2020 by Farsight Security, Inc.
+ * Copyright (c) 2014-2021 by Farsight Security, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -446,23 +446,23 @@ help(void) {
 	printf("usage: %s [-cdFhjqsTUv46] \n",
 	       program_name);
 #if 0 /* disable output limit feature */
-	puts("\t[-l QUERY-LIMIT] [-L OUTPUT-LIMIT] [-A after] [-B before]\n"
+	puts("\t[-l QUERY-LIMIT] [-L OUTPUT-LIMIT] [-A AFTER] [-B BEFORE]\n"
 #else
-	puts("\t[-l QUERY-LIMIT] [-A after] [-B before]\n"
+	puts("\t[-l QUERY-LIMIT] [-A AFTER] [-B BEFORE]\n"
 #endif
-	     "\t[-u system] [-O offset]\n"
+	     "\t[-u SYSTEM] [-O OFFSET]\n"
 	     "\t{\n"
-	     "\t\t[--regex regex] |\n"
-	     "\t\t[--glob glob]\n"
+	     "\t\t[--regex REGEX] |\n"
+	     "\t\t[--glob GLOB]\n"
 	     "\t}\n"
-	     "\t[--exclude glob|regex]\n"
+	     "\t[--exclude GLOB|REGEX]\n"
 #ifdef DETAILS_SUPPORTED
 	     "\t[--mode terse|t|details|d]\n"
 #else
 	     "\t[--mode terse|t]\n"
 #endif
 	     "\t[-s rrnames|n|rdata|d]\n"
-	     "\t[-t rrtype]\n"
+	     "\t[-t RRTYPE]\n"
 	     "for -A and -B, use absolute format YYYY-MM-DD[ HH:MM:SS],\n"
 	     "\tor relative format %dw%dd%dh%dm%ds.\n"
 	     "use -c to get complete (strict) time matching for -A and -B.\n"
@@ -589,21 +589,34 @@ parse_long(const char *in, long *out) {
  */
 static void
 read_configs(void) {
+	char *value;
 	const char * const *conf;
 	char *cf = NULL;
 
-	for (conf = conf_files; *conf != NULL; conf++) {
-		wordexp_t we;
-
-		wordexp(*conf, &we, WRDE_NOCMD);
-		cf = strdup(we.we_wordv[0]);
-		assert(cf != NULL);
-		wordfree(&we);
-		if (access(cf, R_OK) == 0) {
-			DEBUG(1, true, "conf found: '%s'\n", cf);
-			break;
+	value = getenv(env_config_file);
+	if (value != NULL) {
+		if (access(value, R_OK) == 0) {
+			DEBUG(1, true, "conf found via env variable: '%s'\n", value);
+			cf = strdup(value);
+		} else {
+			fprintf(stderr, "%s: Cannot read configuration file '%s' named in env variable: %s\n",
+				program_name, value, strerror(errno));
+			my_exit(1);
 		}
-		DESTROY(cf);
+	} else {
+		for (conf = conf_files; *conf != NULL; conf++) {
+			wordexp_t we;
+
+			wordexp(*conf, &we, WRDE_NOCMD);
+			cf = strdup(we.we_wordv[0]);
+			assert(cf != NULL);
+			wordfree(&we);
+			if (access(cf, R_OK) == 0) {
+				DEBUG(1, true, "conf found: '%s'\n", cf);
+				break;
+			}
+			DESTROY(cf);
+		}
 	}
 	if (cf != NULL) {
 		char *cmd, *line;
