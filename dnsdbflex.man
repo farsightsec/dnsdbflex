@@ -320,7 +320,7 @@ configuration file which can specify the API key, etc. variables. The
 first of these which is readable will be used, alone, in its
 entirety.  See the
 .Ic DNSDBQ_CONFIG_FILE
-environment variable below which can specify a different configuration
+environment variable which can specify a different configuration
 file to use.
 .Pp
 For backwards compability,
