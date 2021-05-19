@@ -197,11 +197,17 @@ Search in the rrnames part of DNS records, aka the left-hand side.  Can abbrevia
 Search in the rdata part of DNS records, aka the right-hand side.  Can abbreviate as 'd'.
 .El
 .It Fl t Ar rrtype
-specify the resource record type desired.  Default is ANY.  Valid
-values include those defined in DNS RFCs, including ANY, except DNSSEC
+specify the resource record type desired.  Default is ANY.
+.Pp
+For rrnames queries, valid
+rrtypes include those defined in DNS RFCs, including ANY, except DNSSEC
 types are not allowed (ANY-DNSSEC, CDNSKEY, CDS, DLV, DNSKEY, DS,
 NSEC, NSEC3, NSEC3PARAM, and RRSIG resource record types).  Also valid
 are TYPE# values.
+.Pp
+For rdata queries, only the following rrtypes are valid: CNAME,
+HINFO, MX, NAPTR, NS, PTR, RP, SOA, SPF, SRV, and TXT.  Also valid are
+their TYPE# values.
 .It Fl T
 Like
 .Fl F
