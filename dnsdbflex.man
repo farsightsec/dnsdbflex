@@ -117,7 +117,7 @@ Specify mode of information to return in results.
 .It Cm terse
 Can abbreviate as 't'.  This is the only value currently supported and
 it is the default, so the
-.Fl --mode
+.Fl -mode
 option need not be specified.
 .Pp
 For rrnames queries, returns the rrname and rrtype.
