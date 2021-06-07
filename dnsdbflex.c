@@ -483,7 +483,7 @@ help(void) {
 #endif
 	puts("\nGetting Started:\n"
 	     "\tAdd your API key to ~/.dnsdb-query.conf like this:\n"
-	     "\t\tAPIKEY=\"YOURAPIKEYHERE\"");
+	     "\t\tDNSDB_API_KEY=\"YOURAPIKEYHERE\"");
 	printf("\nTry $ man %s for full documentation.\n", program_name);
 }
 
@@ -632,7 +632,7 @@ read_configs(void) {
 			     ". %s;"
 			     "echo dnsdbq system $" DNSDBQ_SYSTEM ";"
 #if WANT_PDNS_DNSDB2
-			     "echo dnsdb2 apikey $APIKEY;"
+			     "echo dnsdb2 apikey ${DNSDB_API_KEY:-$APIKEY};"
 			     "echo dnsdb2 server $DNSDB_SERVER;"
 #endif
 			     "exit", cf);
