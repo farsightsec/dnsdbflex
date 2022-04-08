@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2021 by Farsight Security, Inc.
+ * Copyright (c) 2014-2022 by Farsight Security, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,8 @@ Table of Contents:
 
 Introduction:
 
-    dnsdbflex is a pure C99 program that accesses passive DNS database systems such as:
+    dnsdbflex is a pure C99 program that accesses passive DNS database systems
+    such as:
         * the DNSDB Flex API server at Farsight Security
 
     An API key is required for operation.
@@ -87,26 +88,33 @@ Building and installing:
     cd dnsdbflex
     make install clean
 
+    On macOS on Apple M1 processors, Homebrew now defaults to be
+    installed in /opt/homebrew instead of /usr/local.  If that is the
+    case on your system, in the Makefile, uncomment the line
+    #JANSBASE=/opt/homebrew
+
     On macOS, if you want an almost static dnsdbflex binary on macOS,
     that is, one without any non-System library dependencies, you can
     rebuild dnsdbflex with a static jansson library.  That binary could
     then be deployed on any identical macOS version and architecture.
 
-	1. Find the static jansson library, probably
-	   /usr/local/lib/libjansson.a as installed by brew.
+	1. Find the static jansson library, probably as installed by brew
+	   /usr/local/lib/libjansson.a or /opt/homebrew/lib/libjansson.a
 	2. Change the Makefile's line
-		JANSLIBS = -L/usr/local/lib -ljansson
+		JANSLIBS = -L$(JANSBASE)/lib -ljansson
 	    to instead specify the static library location, probably to:
-		JANSLIBS = /usr/local/lib/libjansson.a
+		JANSLIBS = $(JANSBASE)/lib/libjansson.a
 	3. Then run make
 
 Getting Started:
     Add the API key to ~/.dnsdb-query.conf in the below given format,
     DNSDB_API_KEY="YOURAPIKEYHERE"
 
-    If you don't have an API key, you may qualify for a free one:
-    https://www.farsightsecurity.com/dnsdb-community-edition/
-
+    If you're interested in purchasing a Farsight DNSDB subscription,
+    please contact sales@farsightsecurity.com.  Farsight also has a
+    grant program for selected researchers, investigative journalists,
+    and cybersecurity workers at some public benefit non-profits.
+    See https://www.farsightsecurity.com/grant-access/
 
 Optional Filter Scripts:
 
