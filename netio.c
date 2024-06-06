@@ -112,6 +112,13 @@ create_fetch(query_t query, char *url) {
 		curl_easy_setopt(fetch->easy,
 				 CURLOPT_IPRESOLVE, curl_ipresolve);
 
+	if (curl_timeout != 0L) {
+		curl_easy_setopt(fetch->easy,
+				 CURLOPT_CONNECTTIMEOUT, curl_timeout);
+		curl_easy_setopt(fetch->easy,
+				 CURLOPT_TIMEOUT, curl_timeout);
+	}
+
 	if (psys->auth != NULL)
 	    psys->auth(fetch);
 
