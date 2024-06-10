@@ -25,6 +25,7 @@
 .Op Cm --glob Ar glob
 .Op Cm --mode Ar terse
 .Op Cm --regex Ar regular_expression
+.Op Cm --timeout Ar timeout
 .Op Fl A Ar timestamp
 .Op Fl B Ar timestamp
 .Op Fl l Ar query_limit
@@ -129,6 +130,10 @@ Specify that
 .Nm dnsdbflex
 should do a regular expression search in the FCRE syntax.  Can abbreviate as
 .Ic --r .
+
+.It Cm --timeout Ar timeout
+Specify the timeout, in seconds, for the initial connection to the database server and for each subsequent transaction. 0 means no timeout.
+
 .It Fl A Ar timestamp
 Specify a backward time fence. Only results seen by the passive DNS
 sensor network on or after this time will be selected. See also
@@ -364,6 +369,10 @@ contains the URL of the DNSDB API server, and optionally a URI prefix to be
 used. If not set, the configuration file is consulted.
 .It Ev DNSDBQ_SYSTEM
 See DNSDBQ_SYSTEM in the FILES section above.
+.It Ev DNSDBFLEX_TIMEOUT
+Specify the timeout (in seconds) to use for network requests. An alternative to passing
+.Ic --timeout <seconds>
+on the command line
 .El
 .Sh "EXIT STATUS"
 Success (exit status zero) occurs if a connection could be established
