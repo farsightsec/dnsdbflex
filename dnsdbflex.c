@@ -64,6 +64,7 @@ static pdns_system_ct pick_system(const char *);
 static void qdesc_debug(const char *, qdesc_ct);
 static __attribute__((noreturn)) void usage(const char *, ...);
 static bool parse_long(const char *, long *);
+static void set_timeout(const char *, const char *);
 static void read_configs(void);
 static char *makepath(qdesc_ct);
 static void query_launcher(qdesc_ct, writer_t);
@@ -104,6 +105,10 @@ main(int argc, char *argv[]) {
 	else
 		program_name++;
 
+	char *value;
+	if ((value = getenv(env_timeout)) != NULL)
+		set_timeout(value, env_timeout);
+
 	int option_index = 0;
 
 	/* All the getopt_long switches use the following enum */
@@ -113,7 +118,8 @@ main(int argc, char *argv[]) {
 		long_opt_force,		/* --force */
 		long_opt_glob,		/* --glob */
 		long_opt_mode,		/* --mode */
-		long_opt_regex		/* --regex */
+		long_opt_regex,		/* --regex */
+		long_opt_timeout	/* --timeout */
 	} long_opt_switch = long_opt_none;
 
 	static struct option long_options[] = {
@@ -128,6 +134,8 @@ main(int argc, char *argv[]) {
 		 long_opt_mode},
 		{"regex",   required_argument, (int*)&long_opt_switch,
 		 long_opt_regex},
+		{"timeout",   required_argument, (int*)&long_opt_switch,
+		 long_opt_timeout},
 		{NULL,	    0,			NULL, 0}
 	};
 
@@ -148,6 +156,17 @@ main(int argc, char *argv[]) {
 			 * the common variable all the long options set.
 			 */
 			switch (long_opt_switch) {
+			case long_opt_timeout:
+				sz = strlen(optarg);
+				if (sz == 0)
+					usage("The --timeout option requires"
+					      " a non-empty argument");
+				if (sz > MAX_VALUE_LEN)
+					usage("The --timeout option is too long"
+					      " (%u is the maximum length)",
+					      MAX_VALUE_LEN);
+				set_timeout(optarg, "--timeout");
+				break;
 			case long_opt_regex:
 				sz = strlen(optarg);
 				if (sz == 0)
@@ -585,6 +604,16 @@ parse_long(const char *in, long *out) {
 	return true;
 }
 
+/* set_timeout -- ingest a setting for curl_timeout
+ *
+ * exits through usage() if the value is invalid.
+ */
+static void
+set_timeout(const char *value, const char *source) {
+	if (!parse_long(value, &curl_timeout) || (curl_timeout < 0))
+		usage("%s must be non-negative", source);
+}
+
 /* read_configs -- try to find a config file in static path, then parse it.
  */
 static void
@@ -811,6 +840,8 @@ query_launcher(qdesc_ct qdp, writer_t writer) {
 		my_exit(1);
 
 	DEBUG(1, true, "url [%s]\n", url);
+	if (curl_timeout != 0)
+		DEBUG(1, true, "curl_timeout is  %lu\n", curl_timeout);
 
 	create_fetch(query, url);
 }
