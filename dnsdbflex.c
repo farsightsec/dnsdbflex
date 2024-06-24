@@ -526,7 +526,7 @@ qdesc_debug(const char *where, qdesc_ct qdp) {
 
 	const char *sep = "\040";
 	if (qdp->value != NULL) {
-		debug(true, "%sth '%s'", sep, qdp->value);
+		debug(false, "%sth '%s'", sep, qdp->value);
 		sep = ",\040";
 	}
 	if (qdp->rrtype != NULL) {
@@ -628,8 +628,8 @@ read_configs(void) {
 			DEBUG(1, true, "conf found via env variable: '%s'\n", value);
 			cf = strdup(value);
 		} else {
-			fprintf(stderr, "%s: Cannot read configuration file '%s' named in env variable: %s\n",
-				program_name, value, strerror(errno));
+			my_logf("Cannot read configuration file '%s' named in env variable: %s",
+				value, strerror(errno));
 			my_exit(1);
 		}
 	} else {
@@ -670,8 +670,8 @@ read_configs(void) {
 			my_panic(true, "asprintf");
 		f = popen(cmd, "r");
 		if (f == NULL) {
-			fprintf(stderr, "%s: [%s]: %s",
-				program_name, cmd, strerror(errno));
+			my_logf("[%s]: %s",
+				cmd, strerror(errno));
 			DESTROY(cmd);
 			my_exit(1);
 		}
@@ -696,9 +696,9 @@ read_configs(void) {
 			tok2 = strtok_r(NULL, "\040\012", &saveptr);
 			tok3 = strtok_r(NULL, "\040\012", &saveptr);
 			if (tok1 == NULL || tok2 == NULL) {
-				fprintf(stderr,
-					"%s: conf line #%d: malformed\n",
-					program_name, l);
+				my_logf(
+					"conf line #%d: malformed",
+					l);
 				my_exit(1);
 			}
 			if (tok3 == NULL || *tok3 == '\0') {
@@ -714,9 +714,8 @@ read_configs(void) {
 				{
 					psys = pick_system(tok3);
 					if (psys == NULL) {
-						fprintf(stderr,
-							"%s: unknown %s %s\n",
-							program_name,
+						my_logf(
+							"unknown %s %s",
 							DNSDBQ_SYSTEM,
 							tok3);
 						my_exit(1);
@@ -841,7 +840,7 @@ query_launcher(qdesc_ct qdp, writer_t writer) {
 
 	DEBUG(1, true, "url [%s]\n", url);
 	if (curl_timeout != 0)
-		DEBUG(1, true, "curl_timeout is  %lu\n", curl_timeout);
+		DEBUG(1, true, "curl_timeout is %lu\n", curl_timeout);
 
 	create_fetch(query, url);
 }

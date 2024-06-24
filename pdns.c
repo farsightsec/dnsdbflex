@@ -152,14 +152,14 @@ tuple_make(pdns_tuple_t tup, const char *buf, size_t len) {
 	DEBUG(4, true, "[%d] '%-*.*s'\n", (int)len, (int)len, (int)len, buf);
 	tup->obj.main = json_loadb(buf, len, 0, &error);
 	if (tup->obj.main == NULL) {
-		fprintf(stderr, "%s: warning: json_loadb: %d:%d: %s %s\n",
-			program_name, error.line, error.column,
+		my_logf("warning: json_loadb: %d:%d: %s %s",
+			error.line, error.column,
 			error.text, error.source);
 		abort();
 	}
 	if (debug_level >= 4) {
 		char *pretty = json_dumps(tup->obj.main, JSON_INDENT(2));
-		fprintf(stderr, "debug: %s\n", pretty);
+		debug(false, "%s\n", pretty);
 		free(pretty);
 	}
 
@@ -316,9 +316,9 @@ data_blob(query_t query, const char *buf, size_t len) {
 		} else {
 			/* use sc_missing for an invalid cond value  */
 			query->saf_cond = sc_missing;
-			fprintf(stderr,
-				"%s: Unknown value for \"cond\": %s\n",
-				program_name, tup.cond);
+			my_logf(
+				"Unknown value for \"cond\": %s",
+				tup.cond);
 		}
 	}
 
