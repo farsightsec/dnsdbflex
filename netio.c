@@ -61,8 +61,7 @@ make_curl(void) {
 	curl_cleanup_needed = true;
 	multi = curl_multi_init();
 	if (multi == NULL) {
-		fprintf(stderr, "%s: curl_multi_init() failed\n",
-			program_name);
+		my_logf("curl_multi_init() failed");
 		my_exit(1);
 	}
 }
@@ -141,8 +140,8 @@ create_fetch(query_t query, char *url) {
 
 	res = curl_multi_add_handle(multi, fetch->easy);
 	if (res != CURLM_OK) {
-		fprintf(stderr, "%s: curl_multi_add_handle() failed: %s\n",
-			program_name, curl_multi_strerror(res));
+		my_logf("curl_multi_add_handle() failed: %s",
+			curl_multi_strerror(res));
 		my_exit(1);
 	}
 }
@@ -264,16 +263,16 @@ writer_func(char *ptr, size_t size, size_t nmemb, void *blob) {
 					curl_easy_getinfo(fetch->easy,
 							CURLINFO_EFFECTIVE_URL,
 							  &url);
-					fprintf(stderr,
-						"%s: warning: "
-						"libcurl %ld [%s]\n",
-						program_name, fetch->rcode,
+					my_logf(
+						"warning: "
+						"libcurl %ld [%s]",
+						fetch->rcode,
 						url);
 				}
 			}
 			if (!quiet)
-				fprintf(stderr, "%s: warning: libcurl: [%s]\n",
-					program_name, message);
+				my_logf("warning: libcurl: [%s]",
+					message);
 			DESTROY(message);
 			fetch->buf[0] = '\0';
 			fetch->len = 0;
@@ -356,9 +355,9 @@ writer_fini(writer_t writer) {
 		if (query->fetch != NULL) {
 			DESTROY(query->fetch->buf);
 			if (query->fetch->len != 0) {
-				fprintf(stderr,
-					"%s: warning: stranding %d octets!\n",
-					program_name, (int)query->fetch->len);
+				my_logf(
+					"warning: stranding %d octets!",
+					(int)query->fetch->len);
 				query->fetch->len = 0;
 			}
 
@@ -452,24 +451,22 @@ io_drain(void) {
 			      or_else(query->saf_msg, ""));
 
 			if (cm->data.result == CURLE_COULDNT_RESOLVE_HOST) {
-				fprintf(stderr,
-					"%s: warning: libcurl failed since "
-					"could not resolve host\n",
-					program_name);
+				my_logf(
+					"warning: libcurl failed since "
+					"could not resolve host");
 				exit_code = 1;
 			} else if (cm->data.result == CURLE_COULDNT_CONNECT) {
-				fprintf(stderr,
-					"%s: warning: libcurl failed since "
-					"could not connect\n",
-					program_name);
+				my_logf(
+					"warning: libcurl failed since "
+					"could not connect");
 				exit_code = 1;
 			} else if (cm->data.result != CURLE_OK &&
 				   !fetch->stopped)
 			{
-				fprintf(stderr,
-					"%s: warning: libcurl failed with "
-					"curl error %d (%s)\n",
-					program_name, cm->data.result,
+				my_logf(
+					"warning: libcurl failed with "
+					"curl error %d (%s)",
+					cm->data.result,
 					curl_easy_strerror(cm->data.result));
 				exit_code = 1;
 			}
@@ -502,8 +499,8 @@ escape(CURL *easy, char **str) {
 		return;
 	escaped = curl_easy_escape(easy, *str, (int)strlen(*str));
 	if (escaped == NULL) {
-		fprintf(stderr, "%s: curl_escape(%s) failed\n",
-			program_name, *str);
+		my_logf("curl_escape(%s) failed",
+			*str);
 		my_exit(1);
 	}
 	DESTROY(*str);
