@@ -841,7 +841,7 @@ query_launcher(qdesc_ct qdp, writer_t writer) {
 
 	DEBUG(1, true, "url [%s]\n", url);
 	if (curl_timeout != 0)
-		DEBUG(1, true, "curl_timeout is  %lu\n", curl_timeout);
+		DEBUG(1, true, "curl_timeout is %lu\n", curl_timeout);
 
 	create_fetch(query, url);
 }
