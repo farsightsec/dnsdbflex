@@ -53,4 +53,15 @@ EXTERN	long curl_timeout		INIT(0L);
 __attribute__((noreturn)) void my_exit(int);
 __attribute__((noreturn)) void my_panic(bool, const char *);
 
+/* my_logf -- annotate to stderr with program name and current time */
+static inline void
+my_logf(const char *fmtstr, ...) {
+    va_list ap;
+
+    va_start(ap, fmtstr);
+    fprintf(stderr, "%s [%s]: ", program_name, timeval_str(NULL, true));
+    vfprintf(stderr, fmtstr, ap);
+    putc('\n', stderr);
+}
+
 #endif /*GLOBALS_H_INCLUDED*/
